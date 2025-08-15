@@ -45,12 +45,13 @@ const jwt = __importStar(require("jsonwebtoken"));
 let JwtAuthGuard = class JwtAuthGuard {
     canActivate(ctx) {
         const req = ctx.switchToHttp().getRequest();
-        const auth = (req.headers['authorization'] || '');
-        const token = auth.startsWith('Bearer ') ? auth.slice(7) : null;
-        if (!token)
-            throw new common_1.UnauthorizedException('Missing Bearer token');
+        const header = String(req.headers['authorization'] || '');
+        if (!header.startsWith('Bearer '))
+            throw new common_1.UnauthorizedException('Missing token');
+        const token = header.slice(7);
+        const secret = process.env.JWT_SECRET || 'dev_secret';
         try {
-            const payload = jwt.verify(token, process.env.JWT_SECRET || 'dev');
+            const payload = jwt.verify(token, secret);
             req.user = payload;
             return true;
         }

@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
@@ -26,12 +26,12 @@ model Message {
 }
 
 model Notification {
-  id        String   @id @default(cuid())
+  id        String    @id @default(cuid())
   userId    String
   type      String
-  payload   Json
+  payload   String
   readAt    DateTime?
-  createdAt DateTime @default(now())
+  createdAt DateTime  @default(now())
 }
 
 model AuditEvent {
@@ -41,14 +41,14 @@ model AuditEvent {
   actorUserId String?
   entityType  String
   entityId    String
-  data        Json
+  data        String
   at          DateTime @default(now())
 }
 
 model PriceBenchmark {
   id        String   @id @default(cuid())
   lane      String
-  season    String   // PEAK or OFF
+  season    String // PEAK or OFF
   benchCWT  Float
   updatedAt DateTime @updatedAt
   createdAt DateTime @default(now())
@@ -62,11 +62,11 @@ model Preference {
 }
 
 model Exception {
-  id         String   @id @default(cuid())
+  id         String    @id @default(cuid())
   moveId     String
   type       String
   reason     String
-  createdAt  DateTime @default(now())
+  createdAt  DateTime  @default(now())
   resolvedAt DateTime?
 }
 
@@ -84,7 +84,7 @@ model Move {
   taskOrderId       String
   origin            String
   destination       String
-  status            String   // CREATED, ASSIGNED, IN_TRANSIT, DELIVERED
+  status            String // CREATED, ASSIGNED, IN_TRANSIT, DELIVERED
   assignedCarrierId String?
   createdAt         DateTime @default(now())
 }
@@ -93,7 +93,7 @@ model Claim {
   id      String   @id @default(cuid())
   moveId  String
   filedAt DateTime
-  items   Json
+  items   String
   status  String   @default("FILED") // FILED, IN_REVIEW, RESOLVED
 }
 
@@ -102,7 +102,7 @@ model Scorecard {
   orgId     String
   start     DateTime
   end       DateTime
-  data      Json
+  data      String
   createdAt DateTime @default(now())
 }
 
@@ -120,9 +120,9 @@ model AllocationPolicy {
 }
 
 model AllocationShare {
-  id           String  @id @default(cuid())
-  taskOrderId  String
-  orgId        String
-  targetShare  Float   // 0..1
-  assignedCWT  Int     @default(0)
+  id          String @id @default(cuid())
+  taskOrderId String
+  orgId       String
+  targetShare Float // 0..1
+  assignedCWT Int    @default(0)
 }
