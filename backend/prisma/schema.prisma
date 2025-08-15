@@ -1,0 +1,128 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  orgId     String?
+  role      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Message {
+  id        String   @id @default(cuid())
+  moveId    String
+  fromOrgId String?
+  toOrgId   String?
+  text      String
+  createdAt DateTime @default(now())
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  type      String
+  payload   Json
+  readAt    DateTime?
+  createdAt DateTime @default(now())
+}
+
+model AuditEvent {
+  id          String   @id @default(cuid())
+  type        String
+  actorOrgId  String?
+  actorUserId String?
+  entityType  String
+  entityId    String
+  data        Json
+  at          DateTime @default(now())
+}
+
+model PriceBenchmark {
+  id        String   @id @default(cuid())
+  lane      String
+  season    String   // PEAK or OFF
+  benchCWT  Float
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+}
+
+model Preference {
+  userId       String   @id
+  highContrast Boolean  @default(false)
+  fontScale    Float    @default(1)
+  updatedAt    DateTime @updatedAt
+}
+
+model Exception {
+  id         String   @id @default(cuid())
+  moveId     String
+  type       String
+  reason     String
+  createdAt  DateTime @default(now())
+  resolvedAt DateTime?
+}
+
+model Document {
+  id        String   @id @default(cuid())
+  moveId    String
+  type      String
+  hash      String
+  size      Int
+  createdAt DateTime @default(now())
+}
+
+model Move {
+  id                String   @id @default(cuid())
+  taskOrderId       String
+  origin            String
+  destination       String
+  status            String   // CREATED, ASSIGNED, IN_TRANSIT, DELIVERED
+  assignedCarrierId String?
+  createdAt         DateTime @default(now())
+}
+
+model Claim {
+  id      String   @id @default(cuid())
+  moveId  String
+  filedAt DateTime
+  items   Json
+  status  String   @default("FILED") // FILED, IN_REVIEW, RESOLVED
+}
+
+model Scorecard {
+  id        String   @id @default(cuid())
+  orgId     String
+  start     DateTime
+  end       DateTime
+  data      Json
+  createdAt DateTime @default(now())
+}
+
+model AllocationPolicy {
+  id                  String   @id @default(cuid())
+  region              String
+  serviceCat          String
+  smallBusinessTarget Float    @default(0)
+  weightOnTime        Float    @default(0.3)
+  weightClaims        Float    @default(0.2)
+  weightCsat          Float    @default(0.2)
+  weightData          Float    @default(0.15)
+  weightCompliance    Float    @default(0.15)
+  updatedAt           DateTime @updatedAt
+}
+
+model AllocationShare {
+  id           String  @id @default(cuid())
+  taskOrderId  String
+  orgId        String
+  targetShare  Float   // 0..1
+  assignedCWT  Int     @default(0)
+}
